@@ -1,11 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <title>GLA Splice</title>
+    <style type="text/css">
+        .warning {
+            color: orange;
+        }
+    </style>
 </head>
 
 <body>
+    Pick a target .gla file to edit:
+    <input type="file" title="target gla" id="targetGLAFilePickerButton" onchange="fileChanged()" />
+    <br />
+
+    Pick the matching animation.cfg:
+    <input type="file" title="target animation.cfg" id="targetConfigFilePickerButton" onchange="fileChanged()" />
+    <span id="targetConfigFileWarning" class="warning"></span>
+    <br />
+
+    Pick a source .gla file to splice into the target from:
+    <input type="file" title="source gla" id="sourceGLAFilePickerButton" onchange="fileChanged()" />
+    <br />
+
+    Pick the matching animation.cfg:
+    <input type="file" title="source animation.cfg" id="sourceConfigFilePickerButton" onchange="fileChanged()" />
+    <span id="sourceConfigFileWarning" class="warning"></span>
+    <br />
+
+    <button id="loadButton" disabled onclick="load()">Load</button>
+
     <script src="index.js"></script>
 </body>
 
