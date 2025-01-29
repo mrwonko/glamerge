@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "target": "es6", // target reasonably modern browsers
+        "module": "esnext",
+        "outDir": ".", // Output JavaScript files to the same directory
+        "noEmitOnError": true, // Prevent JS output on compilation errors
+        "strict": true,
+        "sourceMap": true
+    },
+    "include": [
+        "index.ts" // Include your TypeScript file
+    ],
+    "exclude": []
+}
