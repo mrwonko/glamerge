@@ -1,20 +1,54 @@
-const targetGLAButton = document.getElementById('targetGLAFilePickerButton') as HTMLInputElement;
-const targetConfigButton = document.getElementById('targetConfigFilePickerButton') as HTMLInputElement;
-const targetConfigWarning = document.getElementById('targetConfigFileWarning') as HTMLSpanElement;
-const sourceGLAButton = document.getElementById('sourceGLAFilePickerButton') as HTMLInputElement;
-const sourceConfigButton = document.getElementById('sourceConfigFilePickerButton') as HTMLInputElement;
-const sourceConfigWarning = document.getElementById('sourceConfigFileWarning') as HTMLSpanElement;
+type NameCheckingInput = {
+    Input: HTMLInputElement;
+    Warning: HTMLSpanElement;
+    ExpectedName: string;
+}
+type InputGroup = {
+    GLA: HTMLInputElement;
+    Animation: NameCheckingInput; // animation.cfg
+    Events: NameCheckingInput; // animevents.cfg
+};
+const targetInputs: InputGroup = {
+    GLA: document.getElementById('targetGLAFilePickerButton') as HTMLInputElement,
+    Animation: {
+        Input: document.getElementById('targetAnimationFilePickerButton') as HTMLInputElement,
+        Warning: document.getElementById('targetAnimationFileWarning') as HTMLSpanElement,
+        ExpectedName: "animation.cfg",
+    },
+    Events: {
+        Input: document.getElementById('targetEventsFilePickerButton') as HTMLInputElement,
+        Warning: document.getElementById('targetEventsFileWarning') as HTMLSpanElement,
+        ExpectedName: "animevents.cfg",
+    },
+};
+const sourceInputs: InputGroup = {
+    GLA: document.getElementById('sourceGLAFilePickerButton') as HTMLInputElement,
+    Animation: {
+        Input: document.getElementById('sourceAnimationFilePickerButton') as HTMLInputElement,
+        Warning: document.getElementById('sourceAnimationFileWarning') as HTMLSpanElement,
+        ExpectedName: "animation.cfg",
+    },
+    Events: {
+        Input: document.getElementById('sourceEventsFilePickerButton') as HTMLInputElement,
+        Warning: document.getElementById('sourceEventsFileWarning') as HTMLSpanElement,
+        ExpectedName: "animevents.cfg",
+    },
+};
 const loadButton = document.getElementById('loadButton') as HTMLButtonElement;
 
 // the "files is FileList" type guard assures typescript that files is not null if the return value is true
 const filesAvailable = (files: FileList | null): files is FileList => files !== null && files.length > 0;
 
+const checkName = (input: NameCheckingInput) => {
+    input.Warning.innerHTML = (filesAvailable(input.Input.files) && input.Input.files[0].name !== input.ExpectedName) ? `Warning: expected file called "${input.ExpectedName}"` : '';
+}
 const fileChanged = () => {
-    loadButton.disabled = !(filesAvailable(targetGLAButton.files) && filesAvailable(targetConfigButton.files) && filesAvailable(sourceGLAButton.files) && filesAvailable(sourceConfigButton.files));
-    targetConfigWarning.innerHTML = (filesAvailable(targetConfigButton.files) && targetConfigButton.files[0].name !== 'animation.cfg') ? 'Warning: expected file called "animation.cfg"' : '';
-    sourceConfigWarning.innerHTML = (filesAvailable(sourceConfigButton.files) && sourceConfigButton.files[0].name !== 'animation.cfg') ? 'Warning: expected file called "animation.cfg"' : '';
+    checkName(sourceInputs.Animation);
+    checkName(sourceInputs.Events);
+    checkName(targetInputs.Animation);
+    checkName(targetInputs.Events);
 }
 
 const load = () => {
-    console.log(`todo: load ${targetGLAButton.files} ${targetConfigButton.files} ${sourceGLAButton.value} ${sourceConfigButton.value}`);
+    console.log(`todo: load`);
 }

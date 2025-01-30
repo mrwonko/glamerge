@@ -7,26 +7,49 @@
         .warning {
             color: orange;
         }
+
+        .filegroup {
+            border-width: 1px;
+            border-style: solid;
+        }
     </style>
 </head>
 
 <body>
-    Pick a target .gla file to edit:
-    <input type="file" title="target gla" id="targetGLAFilePickerButton" onchange="fileChanged()" />
+    <div class="filegroup">
+        Target GLA to modify:<br />
+        .gla:
+        <input type="file" title="target gla" id="targetGLAFilePickerButton" onchange="fileChanged()" />
+        <br />
+
+        animation.cfg:
+        <input type="file" title="target animation.cfg" id="targetAnimationFilePickerButton" onchange="fileChanged()" />
+        <span id="targetAnimationFileWarning" class="warning"></span>
+        <br />
+
+        animevents.cfg (optional):
+        <input type="file" title="target animevents.cfg" id="targetEventsFilePickerButton" onchange="fileChanged()" />
+        <span id="targetEventsFileWarning" class="warning"></span>
+    </div>
+
     <br />
 
-    Pick the matching animation.cfg:
-    <input type="file" title="target animation.cfg" id="targetConfigFilePickerButton" onchange="fileChanged()" />
-    <span id="targetConfigFileWarning" class="warning"></span>
-    <br />
+    <div class="filegroup">
+        Source GLA to copy animations from:<br />
+        .gla:
+        <input type="file" title="source gla" id="sourceGLAFilePickerButton" onchange="fileChanged()" />
+        <br />
 
-    Pick a source .gla file to splice into the target from:
-    <input type="file" title="source gla" id="sourceGLAFilePickerButton" onchange="fileChanged()" />
-    <br />
+        animation.cfg:
+        <input type="file" title="source animation.cfg" id="sourceAnimationFilePickerButton" onchange="fileChanged()" />
+        <span id="sourceAnimationFileWarning" class="warning"></span>
+        <br />
 
-    Pick the matching animation.cfg:
-    <input type="file" title="source animation.cfg" id="sourceConfigFilePickerButton" onchange="fileChanged()" />
-    <span id="sourceConfigFileWarning" class="warning"></span>
+        animevents.cfg (optional):
+        <input type="file" title="source animevents.cfg" id="sourceEventsFilePickerButton" onchange="fileChanged()" />
+        <span id="sourceEventsFileWarning" class="warning"></span>
+    </div>
+
     <br />
 
     <button id="loadButton" disabled onclick="load()">Load</button>
