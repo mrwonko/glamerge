@@ -1,10 +1,11 @@
 type NameCheckingInput = {
     Input: HTMLInputElement;
     Warning: HTMLSpanElement;
-    ExpectedName: string;
+    ExpectedName?: string;
+    ExpectedSuffix?: string;
 }
 type InputGroup = {
-    GLA: HTMLInputElement;
+    GLA: NameCheckingInput;
     Animation: NameCheckingInput; // animation.cfg
     Events: NameCheckingInput; // animevents.cfg
 };
@@ -14,7 +15,11 @@ type ArrayBufferGroup = {
     Events: ArrayBuffer | null;
 };
 const targetInputs: InputGroup = {
-    GLA: document.getElementById('targetGLAFilePickerButton') as HTMLInputElement,
+    GLA: {
+        Input: document.getElementById('targetGLAFilePickerButton') as HTMLInputElement,
+        Warning: document.getElementById('targetGLAFileWarning') as HTMLSpanElement,
+        ExpectedSuffix: ".gla",
+    },
     Animation: {
         Input: document.getElementById('targetAnimationFilePickerButton') as HTMLInputElement,
         Warning: document.getElementById('targetAnimationFileWarning') as HTMLSpanElement,
@@ -27,7 +32,11 @@ const targetInputs: InputGroup = {
     },
 };
 const sourceInputs: InputGroup = {
-    GLA: document.getElementById('sourceGLAFilePickerButton') as HTMLInputElement,
+    GLA: {
+        Input: document.getElementById('sourceGLAFilePickerButton') as HTMLInputElement,
+        Warning: document.getElementById('sourceGLAFileWarning') as HTMLSpanElement,
+        ExpectedSuffix: ".gla",
+    },
     Animation: {
         Input: document.getElementById('sourceAnimationFilePickerButton') as HTMLInputElement,
         Warning: document.getElementById('sourceAnimationFileWarning') as HTMLSpanElement,
@@ -48,17 +57,30 @@ const {
     setLoading, fileChanged,
 } = (() => { // IIFE for encapsulation
     const checkName = (input: NameCheckingInput) => {
-        input.Warning.innerHTML = (filesAvailable(input.Input.files) && input.Input.files[0].name !== input.ExpectedName) ? `Warning: expected file called "${input.ExpectedName}"` : '';
+        const message: string = (() => {
+            if (!filesAvailable(input.Input.files)) {
+                return '';
+            }
+            const name = input.Input.files[0].name;
+            if (input.ExpectedName !== undefined && !name.startsWith(input.ExpectedName)) {
+                return `Warning: expected file called "${input.ExpectedName}"`;
+            }
+            if (input.ExpectedSuffix !== undefined && !name.endsWith(input.ExpectedSuffix)) {
+                return `Warning: expected file ending in ${input.ExpectedSuffix}`;
+            }
+            return '';
+        })();
+        input.Warning.innerHTML = message;
     }
     const setInputGroupDisabled = (inputGroup: InputGroup, value: boolean) => {
-        inputGroup.GLA.disabled = value;
+        inputGroup.GLA.Input.disabled = value;
         inputGroup.Animation.Input.disabled = value;
         inputGroup.Events.Input.disabled = value;
     }
     var loading = false;
     const enableLoadButton = () =>
-        filesAvailable(sourceInputs.GLA.files) && filesAvailable(sourceInputs.Animation.Input.files) &&
-        filesAvailable(targetInputs.GLA.files) && filesAvailable(targetInputs.Animation.Input.files) &&
+        filesAvailable(sourceInputs.GLA.Input.files) && filesAvailable(sourceInputs.Animation.Input.files) &&
+        filesAvailable(targetInputs.GLA.Input.files) && filesAvailable(targetInputs.Animation.Input.files) &&
         !loading;
     const refreshLoadButton = () => {
         loadButton.disabled = !enableLoadButton();
@@ -71,8 +93,10 @@ const {
             refreshLoadButton();
         },
         fileChanged: () => {
+            checkName(sourceInputs.GLA);
             checkName(sourceInputs.Animation);
             checkName(sourceInputs.Events);
+            checkName(targetInputs.GLA);
             checkName(targetInputs.Animation);
             checkName(targetInputs.Events);
             refreshLoadButton();
@@ -100,7 +124,7 @@ const readInputGroup = async (inputGroup: InputGroup): Promise<ArrayBufferGroup>
     const eventFiles = inputGroup.Events.Input.files;
     const eventFile = filesAvailable(eventFiles) ? eventFiles[0] : null;
     const [gla, animation, events] = await Promise.all([
-        readBinaryFile(inputGroup.GLA.files![0]),
+        readBinaryFile(inputGroup.GLA.Input.files![0]),
         readBinaryFile(inputGroup.Animation.Input.files![0]),
         maybeReadBinaryFile(eventFile)
     ]);
