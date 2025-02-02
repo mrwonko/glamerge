@@ -11,6 +11,7 @@ type InputGroup = {
 };
 type ArrayBufferGroup = {
     GLA: ArrayBuffer;
+    // FIXME these are not binary files, treat them as text!
     Animation: ArrayBuffer;
     Events: ArrayBuffer | null;
 };
